@@ -32,4 +32,25 @@ class EmployeeService:
         log_event(f"Employee soft deleted: {employee_id}", "info")
         return {"message": "Employee deleted successfully"}
 
+    def update_employee(self, db: Session, employee_id: int, employee: EmployeeCreate):
+        # Check if employee exists
+        existing_employee = employee_dao.get_employee(db, employee_id)
+        if not existing_employee:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Employee not found"
+            )
+
+        # Check for duplicate email (excluding current employee)
+        email_check = employee_dao.get_employee_by_email(db, employee.email)
+        if email_check and email_check.id != employee_id:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Email already assigned to another employee"
+            )
+
+        updated_employee = employee_dao.update_employee(db, employee_id, employee)
+        log_event(f"Employee updated: {updated_employee.email}", "info")
+        return updated_employee
+
 employee_service = EmployeeService()

@@ -41,7 +41,7 @@ class AttendanceDAO:
         if status:
             query = query.filter(Attendance.status == status)
         
-        return query.offset(skip).limit(limit).all()
+        return query.order_by(Attendance.date.desc()).offset(skip).limit(limit).all()
 
     def get_attendance_by_employee_date(self, db: Session, employee_id: int, date: date):
         return db.query(Attendance).filter(
@@ -54,5 +54,14 @@ class AttendanceDAO:
             Attendance.employee_id == employee_id,
             Attendance.status == AttendanceStatus.PRESENT
         ).count()
+
+    def update_attendance(self, db: Session, attendance_id: int, status: AttendanceStatus):
+        db_attendance = db.query(Attendance).filter(Attendance.id == attendance_id).first()
+        if db_attendance:
+            db_attendance.status = status
+            db.commit()
+            db.refresh(db_attendance)
+            return db_attendance
+        return None
 
 attendance_dao = AttendanceDAO()

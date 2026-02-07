@@ -21,11 +21,9 @@ class AttendanceService:
         # Check for duplicate attendance
         existing_record = attendance_dao.get_attendance_by_employee_date(db, attendance.employee_id, attendance.date)
         if existing_record:
-            log_event(f"Duplicate attendance attempt: Emp {attendance.employee_id} on {attendance.date}", "warning")
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Attendance already marked for this date"
-            )
+            log_event(f"Updating existing attendance: Emp {attendance.employee_id} on {attendance.date}", "info")
+            updated_record = attendance_dao.update_attendance(db, existing_record.id, attendance.status)
+            return updated_record
 
         new_attendance = attendance_dao.create_attendance(db, attendance)
         log_event(f"Attendance marked: Emp {attendance.employee_id}, Status {attendance.status}", "info")

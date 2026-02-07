@@ -31,4 +31,15 @@ class EmployeeDAO:
             return True
         return False
 
+    def update_employee(self, db: Session, employee_id: int, employee_data: EmployeeCreate):
+        db_employee = db.query(Employee).filter(Employee.id == employee_id).first()
+        if db_employee:
+            db_employee.full_name = employee_data.full_name
+            db_employee.email = employee_data.email
+            db_employee.department = employee_data.department
+            db.commit()
+            db.refresh(db_employee)
+            return db_employee
+        return None
+
 employee_dao = EmployeeDAO()

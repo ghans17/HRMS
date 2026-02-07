@@ -14,10 +14,13 @@ class AttendanceBase(BaseModel):
 class AttendanceCreate(AttendanceBase):
     employee_id: int
 
+from app.schemas.employee import EmployeeResponse
+
 class AttendanceResponse(AttendanceBase):
     id: int
     employee_id: int
     created_at: datetime
+    employee: Optional[EmployeeResponse] = None
 
     class Config:
         from_attributes = True

@@ -1,23 +1,27 @@
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import EmployeeList from './pages/EmployeeList';
+import AttendanceReport from './pages/AttendanceReport';
 import './App.css';
 
-function Home() {
-  return (
-    <div>
-      <h1>Welcome to HRMS</h1>
-      <p>This is the home page.</p>
-    </div>
-  );
-}
+import { RefreshProvider } from './context/RefreshContext';
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        {/* Add more routes here */}
-      </Routes>
-    </Router>
+    <RefreshProvider>
+      <Router>
+        <div className="min-h-screen bg-sky-50 flex flex-col">
+          <Navbar />
+          <main className="flex-grow py-6 px-4 sm:px-6 lg:px-8">
+            <Routes>
+              <Route path="/" element={<AttendanceReport />} />
+              <Route path="/employees" element={<EmployeeList />} />
+            </Routes>
+          </main>
+        </div>
+      </Router>
+    </RefreshProvider>
   );
 }
 

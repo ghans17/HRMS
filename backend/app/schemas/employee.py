@@ -1,11 +1,11 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 from datetime import datetime
 from typing import Optional
 
 class EmployeeBase(BaseModel):
-    full_name: str
+    full_name: str = Field(..., min_length=1, description="Full name of the employee")
     email: EmailStr
-    department: str
+    department: str = Field(..., min_length=1, description="Department of the employee")
 
 class EmployeeCreate(EmployeeBase):
     pass
