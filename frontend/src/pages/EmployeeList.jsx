@@ -6,9 +6,11 @@ import Button from '../components/Button';
 import Modal from '../components/Modal';
 import Input from '../components/Input';
 import employeeService from '../services/employeeService';
+import { useRefresh } from '../context/RefreshContext';
 
 const EmployeeList = () => {
   const navigate = useNavigate();
+  const { refreshKey } = useRefresh();
   const [employees, setEmployees] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentEmployee, setCurrentEmployee] = useState(null); // For editing
@@ -18,7 +20,7 @@ const EmployeeList = () => {
 
   useEffect(() => {
     fetchEmployees();
-  }, []);
+  }, [refreshKey]);
 
   const fetchEmployees = async () => {
     try {
