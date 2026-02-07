@@ -3,6 +3,13 @@ from app.core.logger import log_event
 from app.api.v1.employee_router import router as employee_router
 from app.api.v1.attendance_router import router as attendance_router
 from fastapi.middleware.cors import CORSMiddleware
+from app.core.database import Base, engine
+from app.models import employee, attendance  # Ensure models are registered
+
+# Create database tables
+Base.metadata.create_all(bind=engine)
+
+app = FastAPI(title="HRMS API")
 
 app = FastAPI(title="HRMS API")
 
