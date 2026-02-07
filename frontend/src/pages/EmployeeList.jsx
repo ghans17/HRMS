@@ -103,6 +103,7 @@ const EmployeeList = () => {
     { header: 'Full Name', accessor: 'full_name' },
     { header: 'Email', accessor: 'email' },
     { header: 'Department', accessor: 'department' },
+    { header: 'Total Present', accessor: 'total_present' },
   ];
 
   const actions = (row) => (

@@ -1,6 +1,9 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from app.models.employee import Employee
+from app.models.attendance import Attendance
 from app.schemas.employee import EmployeeCreate
+from app.schemas.attendance import AttendanceStatus
 
 class EmployeeDAO:
     def get_employee(self, db: Session, employee_id: int):
@@ -10,7 +13,25 @@ class EmployeeDAO:
         return db.query(Employee).filter(Employee.email == email, Employee.is_active == True).first()
 
     def get_all_employees(self, db: Session, skip: int = 0, limit: int = 100):
-        return db.query(Employee).filter(Employee.is_active == True).offset(skip).limit(limit).all()
+        # Subquery to count present days
+        subquery = db.query(
+            Attendance.employee_id,
+            func.count(Attendance.id).label("total_present")
+        ).filter(
+            Attendance.status == AttendanceStatus.PRESENT
+        ).group_by(Attendance.employee_id).subquery()
+
+        results = db.query(Employee, subquery.c.total_present).outerjoin(
+            subquery, Employee.id == subquery.c.employee_id
+        ).filter(
+            Employee.is_active == True
+        ).offset(skip).limit(limit).all()
+
+        employees = []
+        for emp, count in results:
+            emp.total_present = count if count else 0
+            employees.append(emp)
+        return employees
 
     def create_employee(self, db: Session, employee: EmployeeCreate):
         db_employee = Employee(

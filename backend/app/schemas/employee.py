@@ -14,6 +14,7 @@ class EmployeeResponse(EmployeeBase):
     id: int
     created_at: datetime
     is_active: bool
+    total_present: Optional[int] = 0
 
     class Config:
         from_attributes = True
